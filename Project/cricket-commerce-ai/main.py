@@ -1,5 +1,3 @@
-# pip install ollama
-
 import ollama
 import re
 
@@ -66,7 +64,7 @@ def extract_order_id(text):
 
 
 # --------------------------------
-# Intent Classification (LLM)
+# Intent Classification
 # --------------------------------
 
 def classify_intent(query):
@@ -157,10 +155,10 @@ Action Taken:
 Refund request initiated.
 
 Next Steps:
-A return label will be sent to your email. Please ship the bat back to our warehouse.
+A return label will be sent to your email.
 
 Expected Timeline:
-Refund will be processed within 5–7 business days after warehouse inspection.
+Refund processed within 5–7 business days.
 """
 
 
@@ -174,7 +172,6 @@ def orchestrator(query):
 
     order_id = extract_order_id(query)
 
-    # If user sends only order ID
     if order_id:
 
         if current_intent == "Order status":
@@ -186,43 +183,19 @@ def orchestrator(query):
         else:
             return "Please ask about order status or refund first."
 
-    # Detect intent
     intent = classify_intent(query)
-
-    print("Detected Intent:", intent)
 
     if intent:
         current_intent = intent
-
-    # Routing
 
     if "Product inquiry" in intent:
         return cricket_specialist(query)
 
     elif "Order status" in intent:
-        return "Please provide your 5-digit Order ID so I can check your cricket bat order."
+        return "Please provide your 5-digit Order ID."
 
     elif "Refund" in intent:
-        return "Please provide your 5-digit Order ID so I can check refund eligibility."
+        return "Please provide your 5-digit Order ID to start refund."
 
     else:
-        return "Sorry, I can only help with cricket bat products, orders, or refunds."
-
-
-# --------------------------------
-# Chat Loop
-# --------------------------------
-
-print("\n🏏 Cricket CommerceOps Agent Running")
-print("Type 'exit' to quit\n")
-
-while True:
-
-    user_input = input("Customer: ")
-
-    if user_input.lower() == "exit":
-        break
-
-    response = orchestrator(user_input)
-
-    print("\nAgent:", response)
+        return "I can help with cricket bats, orders, or refunds."

@@ -1,0 +1,90 @@
+Retrieval-Augmented Generation (RAG) is an AI framework that improves the accuracy and rel
+---
+d relevance of large language models (LLMs) by connecting them to external knowledge sourc
+---
+sources. Instead of relying solely on the data the model was pre-trained on, RAG dynamical
+---
+mically pulls up-to-date information from trusted repositories to provide context-aware, v
+---
+re, verifiable answers. 
+Wikipedia
+Wikipedia
+ +3
+The RAG Process: Breakdown
+RAG splits the
+---
+s the AI interaction into three main phases: 
+1. Retrieval: The system takes a user query 
+---
+uery and searches for relevant documents (PDFs, websites, internal databases) using semant
+---
+emantic search.
+2. Augmentation: The retrieved information is appended to the original que
+---
+l query, enhancing it with specific, authoritative data.
+3. Generation: The LLM uses this 
+---
+this enriched context to generate a highly accurate, human-like response. 
+Wikipedia
+Wikip
+---
+Wikipedia
+ +3
+Why RAG "Breaks" in Production
+While simple RAG works well for demos, many i
+---
+any implementations fail in production for several key reasons:
+Retrieval Failures: The sy
+---
+he system fails to find the most relevant information, or it fetches irrelevant data, resu
+---
+ resulting in poor answers.
+Context Fragmentation (Chunking Issues): Large documents are b
+---
+are broken into "chunks" to be indexed, which can break the logical structure and context,
+---
+text, leading to incoherent responses.
+Stale Data: If the external knowledge base isn't re
+---
+'t refreshed properly, RAG will generate responses based on outdated information.
+Security
+---
+urity and Permissions: Ensuring the AI only retrieves documents the user has permission to
+---
+on to see is complex to implement.
+"Lost in the Middle": When too much context is retrieve
+---
+rieved, LLMs often suffer from reduced performance, losing the relevant information in the
+---
+n the middle of a very long prompt. 
+Unified.to
+Unified.to
+ +4
+Components of a RAG System
+
+---
+stem
+Vector Database: Stores data in a searchable format (e.g., Pinecone, Chroma).
+Embeddi
+---
+bedding Model: Converts text into numerical vectors to identify semantic meaning.
+Retrieve
+---
+riever: Finds the most relevant documents based on the query.
+Generator (LLM): Creates the
+---
+s the final response (e.g., GPT, Claude). 
+Kore.ai
+Kore.ai
+ +4
+RAG is considered a "game-c
+---
+ame-changer" for enterprise AI, as it allows for, higher accuracy, lower hallucination rat
+---
+n rates, and better source attribution without the high cost of retraining the model. 
+Ama
+---
+ 
+Amazon Web Services (AWS)
+Amazon Web Services (AWS)
+---

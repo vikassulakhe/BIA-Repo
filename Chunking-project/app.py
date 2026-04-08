@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 import chromadb
 from sentence_transformers import SentenceTransformer
 from groq import Groq
@@ -96,7 +97,14 @@ def retrieve(query, k=5):
         n_results=k
     )
 
-    return results["documents"][0]
+    # Chroma returns 'documents' as a list-of-lists (one per query).
+    # Return the first inner list (documents for this single query) or an empty list.
+    if isinstance(results, dict):
+        docs = results.get("documents")
+        if docs and isinstance(docs, list):
+            first = docs[0] if len(docs) > 0 else None
+            return first or []
+    return []
 
 # -----------------------------
 # VALIDATE API KEY ✅
@@ -120,14 +128,20 @@ def validate_api_key(api_key):
 # -----------------------------
 st.sidebar.title("🔐 Settings")
 
+# Prefer GROQ_API_KEY from environment; user can override in the sidebar
+env_key = os.getenv("GROQ_API_KEY")
+if env_key:
+    st.sidebar.info("Using GROQ_API_KEY from environment")
+
 groq_api_key = st.sidebar.text_input(
     "Enter Groq API Key",
-    type="password"
+    type="password",
+    value=env_key or ""
 )
 
 # Validate once per session
 if not groq_api_key:
-    st.warning("⚠️ Please enter your Groq API key")
+    st.warning("⚠️ Please enter your Groq API key or set GROQ_API_KEY in the environment")
     st.stop()
 
 if "api_valid" not in st.session_state:

@@ -5,6 +5,22 @@ from groq import Groq
 from pypdf import PdfReader
 import docx
 import base64
+import os
+from pathlib import Path
+
+try:
+    from dotenv import load_dotenv
+except Exception:
+    load_dotenv = None
+
+# If python-dotenv is available, load a .env file next to this script
+if load_dotenv:
+    load_dotenv(dotenv_path=Path(__file__).with_name('.env'))
+
+# Prefer environment GROQ key
+env_key = os.getenv("GROQ_API_KEY")
+if env_key:
+    st.sidebar.info("Using GROQ_API_KEY from environment")
 
 # -----------------------------
 # PAGE CONFIG
@@ -146,7 +162,14 @@ def retrieve(query, k=5):
         n_results=k
     )
 
-    return results["documents"][0]
+    # Chroma returns 'documents' as a list-of-lists (one per query).
+    # Return the first inner list (documents for this single query) or an empty list.
+    if isinstance(results, dict):
+        docs = results.get("documents")
+        if docs and isinstance(docs, list):
+            first = docs[0] if len(docs) > 0 else None
+            return first or []
+    return []
 
 # -----------------------------
 # VALIDATE API KEY
@@ -168,10 +191,11 @@ def validate_api_key(api_key):
 # -----------------------------
 st.sidebar.title("🔐 Settings")
 
-api_key = st.sidebar.text_input("Enter Groq API Key", type="password")
+# Use environment key by default; allow sidebar override
+api_key = st.sidebar.text_input("Enter Groq API Key", type="password", value=env_key or "")
 
 if not api_key:
-    st.warning("Enter API key")
+    st.warning("Enter API key or set GROQ_API_KEY in the environment")
     st.stop()
 
 if "valid" not in st.session_state:

@@ -58,7 +58,9 @@ def detect_language_llm(text):
     Text: {text}
     """
     response = llm.invoke(prompt)
-    return response.content.strip().lower()
+    # `invoke` may return an object with `content` or a raw string.
+    text = getattr(response, "content", response) or ""
+    return str(text).strip().lower()
 
 # -----------------------------------
 # Router

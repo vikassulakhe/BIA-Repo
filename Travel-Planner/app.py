@@ -4,6 +4,7 @@ import streamlit as st
 from datetime import datetime, timezone
 from dotenv import load_dotenv
 from groq import Groq
+from typing import Optional, List
 
 # Load .env if present
 load_dotenv()
@@ -76,11 +77,14 @@ Return as a numbered list.
     return resp.choices[0].message.content
 
 
-def parse_numbered_list(text: str):
-    """Try to split a numbered list (1., 2., 3.) into items. Fallback to lines."""
+def parse_numbered_list(text: Optional[str]) -> List[str]:
+    """Try to split a numbered list (1., 2., 3.) into items. Fallback to lines.
+
+    Accepts None and returns an empty list in that case to satisfy type checkers.
+    """
     if not text:
         return []
-    items = []
+    items: List[str] = []
     # Split on numbered bullets like '1.' at line starts
     import re
     parts = re.split(r"\n\s*\d+[\.|)]\s+", "\n" + text)
@@ -310,7 +314,10 @@ def main():
                     if st.button(f"Cancel booking #{i+1}", key=f"cancel_{i}"):
                         st.session_state.bookings.pop(i)
                         st.success("Booking cancelled")
-                        st.experimental_rerun()
+                        # Use getattr to call experimental rerun if available (avoids Pylance attribute error)
+                        rerun = getattr(st, "experimental_rerun", None)
+                        if callable(rerun):
+                            rerun()
         else:
             st.info("No bookings yet")
     st.sidebar.markdown("---")

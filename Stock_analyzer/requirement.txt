@@ -1,0 +1,15 @@
+# ==============================
+# requirements.txt
+# ==============================
+yfinance
+pandas
+numpy
+ta
+streamlit
+openai
+python-dotenv
+requests
+beautifulsoup4
+transformers torch
+vaderSentiment
+textblob
